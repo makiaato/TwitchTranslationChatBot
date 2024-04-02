@@ -2,7 +2,7 @@
 _This ReadMe was last reviewed on 2nd April 2024_
 
 # DESCRIPTION
-This repository aims to set up and execute a ChatBot for [twitch.tv](https://www.twitch.tv/). It's customized for the channel [@blluist](https://www.twitch.tv/blluist). Therefore, the bot will aim to translate japanese messages to English. Rōmaji words are excluded as good as possible for the translation. The bot uses DeepL for translation (**credit card verification** is needed for free version of DeepL-API, but no cost-subscription will be made). This ReadMe is also written for people with zero knowlege in programming. Those who are more skilled, can quick read the first words of the instructions and skip the rest safely. Additionally, the code is pretty hotwired and written while being hungry. There is still much to be done on the human side, so it's more a script than a software (yet?). 
+This repository aims to set up and execute a ChatBot for [twitch.tv](https://www.twitch.tv/). It's customized for the channel [@blluist](https://www.twitch.tv/blluist). Therefore, the bot will aim to translate japanese messages to English. Rōmaji words are excluded as good as possible for the translation. The bot uses DeepL for translation (**credit card verification** is needed for the free version of DeepL-API, but no cost-subscription will be made). This ReadMe is also written for people with zero knowlege in programming. Those who are more skilled, can quick read the first words of the instructions and skip the rest safely. Additionally, the code is pretty hotwired and written while being hungry. There is still much to be done on the human side, so it's more a script than a software (yet?). 
 
 
 
@@ -60,7 +60,8 @@ Write down the two values **YOUR_ACCESS_TOKEN_IS_HERE** and **YOUR_REFRESH_TOKEN
 
 
 # STARTING/EXIT INSTRUCTIONS
-**Starting**: Open bash and change the current bash position to the repository folder. For example, if the repository path lies at:
+**Starting**
+Open bash and change the current bash position to the repository folder. For example, if the repository path lies at:
 ```
 C:\Users\YourUsernameIsUsuallyHere\Downloads\gitProjects\TwitchTranslationChatBot
 ```
@@ -73,7 +74,9 @@ Don't forget to replace *YourUsernameIsUsuallyHere* if you intend to copy my exa
 py translation.py
 ```
 Python should boot up the script then and if the bot says it's ready, then it's ready! For confirmation, the bot will post a boot-up message in your channel, too. 
-**Closing**: Just close the bash window
+
+## Closing
+Just close the bash window
 
 
 
