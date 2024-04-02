@@ -1,4 +1,7 @@
 # TwitchTranslationChatBot
+DESCRIPTION
+todododododdo
+
 SET UP INSTRUCTIONS
 1) Install Python
 2) Install packages for python
@@ -19,5 +22,21 @@ example response {"access_token":"YOUR_ACCESS_TOKEN_IS_HERE","expires_in":13895,
 3) Paste relevant keys into the config.csv
 
 
+
 STARTING/EXIT INSTRUCTIONS
-1) TODO TODO TODO git
+1) TODO TODO TODO
+
+
+
+GOALS 
+todotodotodo
+independence
+access token acquisition
+
+
+
+QUIRKS IN CODE
+todotodotodo
+the programming code is customized such that only japanese characters are filtered. If you ever want to use other source languages, then you've to remove the filter
+error handling
+http://www.rikai.com/library/kanjitables/kanji_codes.unicode.shtml
