@@ -1,4 +1,4 @@
-# TwitchTranslationChatBot
+# TwitchTranslationChatBot v0.1.0
 _This ReadMe was last reviewed on 2nd April 2024_
 
 # DESCRIPTION
@@ -51,7 +51,7 @@ Write down the two values **YOUR_ACCESS_TOKEN_IS_HERE** and **YOUR_REFRESH_TOKEN
 
 3. Paste your relevant keys into the config_CHANGEME.csv (the file can be opened by Excel or similiar). 
 
-4. Set *SOURCE_LANGUAGE* to **JA** and *TARGET_LANGUAGE* to **EN-US**.
+4. Set *SOURCE_LANGUAGE* to **JA** and *TARGET_LANGUAGE* to **EN-US**. Also, set your channel. 
 
 5. Make sure to save as CSV-File, so **don't change the file type**!!
 
@@ -60,7 +60,7 @@ Write down the two values **YOUR_ACCESS_TOKEN_IS_HERE** and **YOUR_REFRESH_TOKEN
 
 
 # STARTING/EXIT INSTRUCTIONS
-**Starting**
+## Starting
 Open bash and change the current bash position to the repository folder. For example, if the repository path lies at:
 ```
 C:\Users\YourUsernameIsUsuallyHere\Downloads\gitProjects\TwitchTranslationChatBot

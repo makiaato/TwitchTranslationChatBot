@@ -10,10 +10,10 @@ CLIENT_ID = ''
 CLIENT_SECRET = ''
 ACCESS_TOKEN = ''
 REFRESH_TOKEN = ''
-AUTH_KEY = '' # for DeepL
-SOURCE_LANGUAGE = '' # the programming code is customized such that only japanese characters are filtered. If you ever want to use other source languages, then you've to remove the filter
+AUTH_KEY = ''
+SOURCE_LANGUAGE = ''
 TARGET_LANGUAGE = ''
-CHANNEL_URL = 'ENTER_CHANNEL_URL_HERE'
+CHANNEL_URL = ''
 
 class Bot(commands.Bot):
     def __init__(self):
@@ -24,8 +24,7 @@ class Bot(commands.Bot):
         print(f'Logged in as | {self.nick}')
         print('Bot is ready!')
         await self.get_channel(CHANNEL_URL).send('Translation-Bot is ready! SeriousSloth')
-
-    # chat messages are incoming from here by the 'message' variable
+    
     async def event_message(self, message):
         if message.echo:
             return
@@ -51,13 +50,14 @@ def read_credentials():
                 globals()['AUTH_KEY'] = row[4]
                 globals()['SOURCE_LANGUAGE'] = row[5]
                 globals()['TARGET_LANGUAGE'] = row[6]
+                globals()['CHANNEL_URL'] = row[7]
     print('CSV-File successfully found.')
 
 def write_credentials():
     with open('config.csv', 'w', newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(['CLIENT_ID', 'CLIENT_SECRET', 'ACCESS_TOKEN', 'REFRESH_TOKEN', 'AUTH_KEY', 'SOURCE_LANGUAGE', 'TARGET_LANGUAGE'])
-        writer.writerow([CLIENT_ID, CLIENT_SECRET, ACCESS_TOKEN, REFRESH_TOKEN, AUTH_KEY, SOURCE_LANGUAGE, TARGET_LANGUAGE])
+        writer.writerow(['CLIENT_ID', 'CLIENT_SECRET', 'ACCESS_TOKEN', 'REFRESH_TOKEN', 'AUTH_KEY', 'SOURCE_LANGUAGE', 'TARGET_LANGUAGE', 'CHANNEL_URL'])
+        writer.writerow([CLIENT_ID, CLIENT_SECRET, ACCESS_TOKEN, REFRESH_TOKEN, AUTH_KEY, SOURCE_LANGUAGE, TARGET_LANGUAGE, CHANNEL_URL])
     print('Successfully refreshed credentials.')
 
 def is_access_token_valid():
