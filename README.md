@@ -42,7 +42,7 @@ Copy the URL and replace the template-words **YOUR_CLIENT_ID_PASTE_HERE** with y
 
 2. After replacing the template-words, paste it in the URL-bar of your favourite browser. 
 
-3. When you have entered your modified URL, you will land on a blank page or an error page after that, because we set that in the Twitch-App-Settings at the beginning (remember the "http://localhost:3000"). 
+3. When you have entered your modified URL, you will land on an Authorization Page you might be familiar with. Authorize it and you'll land on a blank page or an error page after that, because we set that in the Twitch-App-Settings at the beginning (remember the "http://localhost:3000"). 
 
 4. You should be able to read your API-Response from the Twitch-API in the URL of your browser now, while being on that error-page. It should look like the following example:
 ```
