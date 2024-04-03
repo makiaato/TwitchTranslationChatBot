@@ -98,6 +98,11 @@ Just close the bash window
 
 
 
+# CURRENTLY WORKING ON
+- Change OAuth access tokens acquisition from "Authorization code grant flow" to "Implicit grant flow"
+
+
+
 # FUTURE GOALS 
 ## Reduce dependencies
 Sometimes it's unavoidable, sometimes, it's just out of convenience. In my case, it's definitely out of convenience. So I aim to reduce the dependencies in the future. Maybe even switch the programming language (please no JavaScript) to something that works without any dependencies. The use-case of the bot is just too little to aim for something bigger. So in turn, I try to go the other direction in making the code as minimalistic as possible. It also improves code readability (for me), if I return to this code after a period of time and won't get overwhelmed by code lines so thick that would rival Goethe's Faust. 
