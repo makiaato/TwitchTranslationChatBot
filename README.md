@@ -4,7 +4,7 @@ _This ReadMe was last reviewed on 3rd April 2024_
 # DESCRIPTION
 This repository aims to set up and execute a chat bot for [twitch.tv](https://www.twitch.tv/). It's customized for the channel [@blluist](https://www.twitch.tv/blluist). Therefore, the bot will aim to translate japanese messages to English. Rōmaji words are excluded as good as possible for the translation. The bot uses DeepL for translation (**credit card verification** is needed for the free version of DeepL-API, but no cost-subscription will be made). This ReadMe is also written for people with zero knowlege in programming. Those who are more skilled, can quick read the first words of the instructions and skip the rest safely. Additionally, the code is pretty short circuited and written while being hungry. There is still much to be done manually on the human side, so it's more a script than a software (yet?). 
 
-The goal of this script is the following: Make a chat bot (a registered Twitch-User) read messages on a Twitch-Channel, ignore every message that isn't in Japanese (including japanese words written in latin letters), translate it to English with DeepL and post the result in the chat.
+The goal of this script is the following: Make a chat bot (a registered Twitch-User), read messages on a Twitch-Channel, ignore every message that isn't in Japanese (including japanese words written in latin letters), translate it to English with DeepL and post the result in the chat.
 
 The current state on how to use the repository is this: Enter personal credentials in a CSV-File, then open a bash terminal and execute the python script
 
@@ -62,7 +62,12 @@ and replace the keywords **YOUR_CLIENT_ID_PASTE_HERE**, **YOUR_CLIENT_SECRET_PAS
 ```
 Write down the two values that are in my example-words **YOUR_ACCESS_TOKEN_IS_HERE** and **YOUR_REFRESH_TOKEN_IS_HERE**. I may state the obvious, but still, both values are important, so keep them secretly. And with that, we got our own **Access Token** for the Twitch-API and another one, the **Refresh Token**, if our current one should expire (they expire in about 3-4 hours, but the script handles that). The hardest part is done, congratulations!
 
-7. Paste your relevant keys into the config_CHANGEME.csv (the file can be opened by Excel or similiar). 
+7. Paste your relevant keys into the config_CHANGEME.csv (the file can be opened by Excel or similiar). You should have the following credentials ready now:
+   - CLIENT_ID (Twitch)
+   - CLIENT_SECRET (Twitch)
+   - ACCESS_TOKEN (Twitch)
+   - REFRESH_TOKEN (Twitch)
+   - AUTH_KEY (DeepL)
 
 8. Set *SOURCE_LANGUAGE* to **JA** and *TARGET_LANGUAGE* to **EN-US**. Also, set your channel. 
 
