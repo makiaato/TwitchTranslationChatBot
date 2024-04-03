@@ -34,38 +34,41 @@ You can close the bash then, if you wish.
 
 
 # INITIALIZATION INSTRUCTIONS (FOR TWITCH)
-1. We still need an API-Access-Token from the Twitch-API. We get that by having a Client-ID (we have that) and an Authorization-Token (we get that now). According to their [Tutorial](https://dev.twitch.tv/docs/irc/authenticate-bot/) we first use following URL:
+1. My script gets access to the Twitch-API by having an API-Access-Token. We can request one by having a Client-ID (we have that) and an **Authorization-Token** (we generate that now and don't confuse it with the Authentication Key from DeepL). According to Twitch's [Tutorial](https://dev.twitch.tv/docs/irc/authenticate-bot/), to generate an Authorization-Token, we first use following URL:
 ```
 https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=YOUR_CLIENT_ID_PASTE_HERE&redirect_uri=http://localhost:3000&scope=chat:read+chat:edit&state=GENERATE_THIRTY_TWO_RANDOM_LETTERS_AND_NUMBERS_FOR_SECURITY
 ```
-Just post the URL in your favourite browser and don't forget to replace the template-characters **YOUR_CLIENT_ID_PASTE_HERE** and **GENERATE_THIRTY_TWO_RANDOM_LETTERS_AND_NUMBERS_FOR_SECURITY**. Your browser should either render a blank page or an error-display page, after you've entered that URL in your browser, because the URL doesn't forward you to a webpage, but to an API-Response. You can read your response in the URL of your browser now and it should look like the following example:
+Copy the URL and replace the template-words **YOUR_CLIENT_ID_PASTE_HERE** with your Client-ID and **GENERATE_THIRTY_TWO_RANDOM_LETTERS_AND_NUMBERS_FOR_SECURITY** with a random series of 32 characters, consisting of numbers and letters and write it down, too (it can look for example like this: a1b2c3d4e5f6g7h8i9j8k7l6). 
+
+2. After replacing the template-words, paste it in the URL-bar of your favourite browser. 
+
+3. When you have entered your modified URL, you will land on a "Grant App Authorization" page from Twitch. You should be familiar with it, if you've ever used Twtich-Extensions or linked your Twitch-Account to other software. Just press "Authorize". Your browser will either show a blank page or an error page after that, because we set that in the Twitch-App-Settings at the beginning (remember the "http://localhost:3000"). 
+
+4. You should be able to read your API-Response from the Twitch-API in the URL of your browser now. It should look like the following example:
 ```
 http://localhost:3000/?code=THE_RELEVANT_AUTHORIZATION_CODE_IS_HERE&scope=chat%3Aread+chat%3Aedit&state=YOUR_RANDOM_VALUE_SHOULD_RETURN_TO_YOU_HERE
 ```
-Make sure that the example-keyword **YOUR_RANDOM_VALUE_SHOULD_RETURN_TO_YOU_HERE** is identical to your random entered value at the beginning. If it's not, then you can't trust that response, else it's a true response from the Twtich-API. Now, copy the value you got for **THE_RELEVANT_AUTHORIZATION_CODE_IS_HERE** and save it somewhere secure, because that's your **Authorization Token**. Metaphorically, the authorization token is the trusted certificate that the Twitch-API recognizes as you being a valid user in the Twitch-API-Underworld. Something like a passport, along the lines. 
+Make sure that the template-word **YOUR_RANDOM_VALUE_SHOULD_RETURN_TO_YOU_HERE** is identical to your random entered value at the beginning. If it's not, then you can't trust that response, else it's a true response from the Twtich-API. Now, copy the value you got for **THE_RELEVANT_AUTHORIZATION_CODE_IS_HERE** and save it somewhere secure, because that's your Authorization Token. Metaphorically, the authorization token is the trusted certificate that the Twitch-API recognizes as you being a valid user in the Twitch-API-Underworld. Something like a passport, along the lines. 
 
-
-2. Following Twitch's [Instructions](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/) we now use a so called "cURL". Superficially and in short, it's an URL you can paste into programs, instead of a web browser. First, open your bash again (Windows-Key + R on Windws). And enter the following example:
+5. Following Twitch's [Instructions](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/) we now use a so called "cURL" to get our Access Token. Superficially and in short, it's an URL you can paste into programs, instead of a web browser. First, open your bash again (Windows-Key + R on Windws), copy the following example:
 ```
 curl -X POST "https://id.twitch.tv/oauth2/token" -H "Content-Type: application/x-www-form-urlencoded" -d "client_id=YOUR_CLIENT_ID_PASTE_HERE&client_secret=YOUR_CLIENT_SECRET_PASTE_HERE&code=YOUR_AUTHORIZATION_CODE_PASTE_HERE&grant_type=authorization_code&redirect_uri=http://localhost:3000"
 ```
-Don't forget to replace the keywords **YOUR_CLIENT_ID_PASTE_HERE**, **YOUR_CLIENT_SECRET_PASTE_HERE** and **YOUR_AUTHORIZATION_CODE_PASTE_HERE**. So, with your ID, your passphrase and a passport, we should get the following example response in your bash:
+and replace the keywords **YOUR_CLIENT_ID_PASTE_HERE**, **YOUR_CLIENT_SECRET_PASTE_HERE** and **YOUR_AUTHORIZATION_CODE_PASTE_HERE**. 
+
+6. After modifiying the example, enter it in your shell. You'll get the following example response in your bash:
 ```
 {"access_token":"YOUR_ACCESS_TOKEN_IS_HERE","expires_in":13895,"refresh_token":"YOUR_REFRESH_TOKEN_IS_HERE","scope":["chat:edit","chat:read"],"token_type":"bearer"}
 ```
-Write down the two values **YOUR_ACCESS_TOKEN_IS_HERE** and **YOUR_REFRESH_TOKEN_IS_HERE**. I may state the obvious, but still, both values are important, so keep them secretly. And with that, we got our own **Access Token** for the Twitch-API and another one, the **Refresh Token**, if our current one should expire (they expire in about 3-4 hours, but the script handles that). The hardest part is done, congratulations!
+Write down the two values that are in my example-words **YOUR_ACCESS_TOKEN_IS_HERE** and **YOUR_REFRESH_TOKEN_IS_HERE**. I may state the obvious, but still, both values are important, so keep them secretly. And with that, we got our own **Access Token** for the Twitch-API and another one, the **Refresh Token**, if our current one should expire (they expire in about 3-4 hours, but the script handles that). The hardest part is done, congratulations!
 
+7. Paste your relevant keys into the config_CHANGEME.csv (the file can be opened by Excel or similiar). 
 
-3. Paste your relevant keys into the config_CHANGEME.csv (the file can be opened by Excel or similiar). 
+8. Set *SOURCE_LANGUAGE* to **JA** and *TARGET_LANGUAGE* to **EN-US**. Also, set your channel. 
 
+9. Make sure to save as CSV-File, so **don't change the file type**!!
 
-4. Set *SOURCE_LANGUAGE* to **JA** and *TARGET_LANGUAGE* to **EN-US**. Also, set your channel. 
-
-
-5. Make sure to save as CSV-File, so **don't change the file type**!!
-
-
-6. Rename the file from *config_CHANGEME.csv* to **config.csv** and you're done with the installation! (A real software would've done all that for you.)
+10. Rename the file from *config_CHANGEME.csv* to **config.csv** and you're done with the installation! (A real software would've done all that for you.)
 
 
 
