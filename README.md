@@ -1,6 +1,11 @@
 # TwitchTranslationChatBot v0.1.0
 _This ReadMe was last reviewed on 3rd April 2024_
 
+## CURRENTLY WORKING ON
+- Change OAuth access tokens acquisition from "Authorization code grant flow" to "Implicit grant flow"
+
+
+
 # DESCRIPTION
 This repository aims to set up and execute a chat bot for [twitch.tv](https://www.twitch.tv/). It's customized for the channel [@blluist](https://www.twitch.tv/blluist). Therefore, the bot will aim to translate japanese messages to English. Rōmaji words are excluded as good as possible for the translation. The bot uses DeepL for translation (**credit card verification** is needed for the free version of DeepL-API, but no cost-subscription will be made). This ReadMe is also written for people with zero knowlege in programming. Those who are more skilled, can quick read the first words of the instructions and skip the rest safely. Additionally, the code is pretty short circuited and written while being hungry. There is still much to be done manually on the human side, so it's more a script than a software (yet?). 
 
@@ -95,11 +100,6 @@ Python should boot up the script then and if the bot says it's ready, then it's 
 
 ## Closing
 Just close the bash window
-
-
-
-# CURRENTLY WORKING ON
-- Change OAuth access tokens acquisition from "Authorization code grant flow" to "Implicit grant flow"
 
 
 
