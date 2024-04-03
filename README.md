@@ -93,20 +93,23 @@ Just close the bash window
 
 
 
-# GOALS 
-todotodotodo
-independence
-access token acquisition
+# FUTURE GOALS 
+## Reduce dependencies
+Sometimes it's unavoidable, sometimes, it's just out of convenience. In my case, it's definitely out of convenience. So I aim to reduce the dependencies in the future. Maybe even switch the programming language (please no JavaScript) to something that works without any dependencies. The use-case of the bot is just too little to aim for something bigger. So in turn, I try to go the other direction in making the code as minimalistic as possible. It also improves code readability (for me), if I return to this code after a period of time and won't get overwhelmed by code lines so thick that would rival Goethe's Faust. 
+
+## Simplify API-Credential-Acquisition
+To state the obvious, it's a real pain to acquire the necessary API-Credentials. I wish it to be more convenient. For me and for those, who will use it, too. 
 
 
 
 # QUIRKS IN CODE
-todotodotodo
-the programming code is customized such that only japanese characters are filtered. If you ever want to use other source languages, then you've to remove the filter
-error handling
-http://www.rikai.com/library/kanjitables/kanji_codes.unicode.shtml
+## Japanese Filter
+The code is customized such that only japanese characters are recognized through a filter. If you ever want to use other source languages, then you've to remove the filter in the code itself. The filter uses a regex to recognize a [fixed set of japanese UTF-characters](http://www.rikai.com/library/kanjitables/kanji_codes.unicode.shtml). So the filter quality is highly dependend on that. Also, mixed languages are also coming through, as long as they have japanese characters. Meaning that a sentence like "遊びましょう please" will be recognized. 
+
+## Error Handling
+I currently use simple console outputs to give feedback on what happens and what might have caused an error. So no real try-throw-error-catching is done. 
 
 
 
 # CODE PHILOSOPHY
-tododododod
+I might consider changing the translation API from DeepL to something less "pricey". DeepL offers a free API-Access, but the usage is limited and you need a credit card verification, which is really inconvenient for general public use. But this involves weighing out the pros and cons and doing comparisions. Currently, DeepL is fine, but I'll think about it. 
