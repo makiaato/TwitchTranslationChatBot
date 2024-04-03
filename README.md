@@ -42,9 +42,9 @@ Copy the URL and replace the template-words **YOUR_CLIENT_ID_PASTE_HERE** with y
 
 2. After replacing the template-words, paste it in the URL-bar of your favourite browser. 
 
-3. When you have entered your modified URL, you will land on a "Grant App Authorization" page from Twitch. You should be familiar with it, if you've ever used Twtich-Extensions or linked your Twitch-Account to other software. Just press "Authorize". Your browser will either show a blank page or an error page after that, because we set that in the Twitch-App-Settings at the beginning (remember the "http://localhost:3000"). 
+3. When you have entered your modified URL, you will land on a blank page or an error page after that, because we set that in the Twitch-App-Settings at the beginning (remember the "http://localhost:3000"). 
 
-4. You should be able to read your API-Response from the Twitch-API in the URL of your browser now. It should look like the following example:
+4. You should be able to read your API-Response from the Twitch-API in the URL of your browser now, while being on that error-page. It should look like the following example:
 ```
 http://localhost:3000/?code=THE_RELEVANT_AUTHORIZATION_CODE_IS_HERE&scope=chat%3Aread+chat%3Aedit&state=YOUR_RANDOM_VALUE_SHOULD_RETURN_TO_YOU_HERE
 ```
