@@ -28,9 +28,23 @@ class Bot(commands.Bot):
     async def event_message(self, message):
         if message.echo:
             return
-        translation_result = translate(message.content)        
+        await self.handle_commands(message)
+        if message.content[:3] == '!ja':
+            return
+        translation_result = translate(message.content, SOURCE_LANGUAGE, TARGET_LANGUAGE)        
         if translation_result:
             await message.channel.send(f'{message.author.name}: {translation_result}')
+        
+    async def event_command_error(self, context: commands.Context, error: Exception):
+        if isinstance(error, commands.CommandNotFound):
+            return
+        print(error)
+
+    @commands.command()
+    async def ja(self, ctx: commands.Context, *, phrase: str):
+        translation_result = translate(phrase, TARGET_LANGUAGE, SOURCE_LANGUAGE)
+        if translation_result:
+            await ctx.send(f'{ctx.author.name}: {translation_result}')
 
     @routines.routine(seconds=900.0)
     async def check_access_token():
@@ -80,10 +94,16 @@ def refresh_access_token():
         print('Couldn\'t refresh Access Token. Check Refresh Token.')
     write_credentials()
 
-def translate(source_text):
-    source_text_cleaned = re.sub(r'[^\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]', '', source_text)
-    if source_text_cleaned:
-        result = TRANSLATOR.translate_text(source_text, source_lang=SOURCE_LANGUAGE, target_lang=TARGET_LANGUAGE)
+def translate(source_text, source_l, target_l):
+    if source_l == 'JA':
+        source_text_cleaned = re.sub(r'[^\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]', '', source_text)
+    elif TRANSLATOR.translate_text(source_text, target_lang='EN-US').detected_source_lang == 'EN':        
+        source_l = 'EN' # DeepL-API recognizes only EN as source-value, no EN-US or EN-GB
+        source_text_cleaned = source_text
+    else:
+        return ''
+    if source_text_cleaned:        
+        result = TRANSLATOR.translate_text(source_text, source_lang=source_l, target_lang=target_l)
         return result.text
 
 read_credentials()
