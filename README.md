@@ -1,4 +1,4 @@
-# TwitchTranslationChatBot v0.2.0
+# TwitchTranslationChatBot v0.2.0-alpha
 ## CURRENTLY WORKING ON
 - thinking about dependencies and if they need changing
 - implement little features
