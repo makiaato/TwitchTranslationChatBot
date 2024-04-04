@@ -75,6 +75,7 @@ def refresh_access_token():
     parsed_refresh_request_result = json.loads(refresh_request_result)
     if 'access_token' in parsed_refresh_request_result:        
         globals()['ACCESS_TOKEN'] = parsed_refresh_request_result['access_token']
+        globals()['REFRESH_TOKEN'] = parsed_refresh_request_result['refresh_token']
     else:
         print('Couldn\'t refresh Access Token. Check Refresh Token.')
     write_credentials()
