@@ -1,5 +1,5 @@
 # TwitchTranslationChatBot v0.1.1
-_This ReadMe was last reviewed on 3rd April 2024_
+_This ReadMe was last reviewed on 4th April 2024_
 
 ## CURRENTLY WORKING ON
 - Reviewing Code and Instructions
