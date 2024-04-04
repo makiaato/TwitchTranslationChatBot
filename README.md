@@ -1,7 +1,8 @@
 # TwitchTranslationChatBot v0.2.0
 ## CURRENTLY WORKING ON
-- Reviewing Code and Instructions
-- Add example images to the instructions
+- thinking about dependencies and if they need changing
+- implement little features
+- add example images to the instructions
 
 
 
