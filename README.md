@@ -1,6 +1,4 @@
-# TwitchTranslationChatBot v0.1.1
-_This ReadMe was last reviewed on 4th April 2024_
-
+# TwitchTranslationChatBot v0.2.0-alpha
 ## CURRENTLY WORKING ON
 - reviewing Code and Instructions
 - add instruction-example-images to the readme
@@ -9,7 +7,7 @@ _This ReadMe was last reviewed on 4th April 2024_
 
 
 
-# DESCRIPTION
+## DESCRIPTION
 This repository aims to set up and execute a chat bot for [twitch.tv](https://www.twitch.tv/). It's customized for the channel [@blluist](https://www.twitch.tv/blluist). Therefore, the bot will aim to translate japanese messages to English. Rōmaji words are excluded as good as possible for the translation. The bot uses DeepL for translation (**credit card verification** is needed for the free version of DeepL-API, but no cost-subscription will be made). This ReadMe is also written for people with zero knowlege in programming. Those who are more skilled, can quick read the first words of the instructions and skip the rest safely. Additionally, the code is pretty short circuited and written while being hungry. There is still much to be done manually on the human side, so it's more a script than a software (yet?). 
 
 The goal of this script is the following: Execute Bot-Behavior via a registered Twitch-User. The behavior reads messages on a Twitch-Channel, ignore every message that isn't in Japanese (including japanese words written in latin letters), translate it to English with DeepL and post the result in the chat.
@@ -26,7 +24,7 @@ Constraints set by the DeepL-API:
 
 
 
-# SET UP INSTRUCTIONS
+## SET UP INSTRUCTIONS
 Before you can execute the script in the repository, your own computer needs the required software to even understand the programming language (Python). Furthermore, you obviously need a Twitch-Account and a DeepL-Account. Without those two accounts, you don't have credentials for their respective APIs.
 
 1. Install Python by downloading it from their [website](https://www.python.org/). Generally, accept every default setting the installer throws at you with **one exception**: Let Python add PATH-variables by ticking the check-box at the beginning of the Python-Installation. 
@@ -51,7 +49,7 @@ You can close the bash then, if you wish.
 
 
 
-# INITIALIZATION INSTRUCTIONS (FOR TWITCH)
+## INITIALIZATION INSTRUCTIONS (FOR TWITCH)
 1. My script gets access to the Twitch-API by having an API-Access-Token. We can request one by having a Client-ID (we have that) and an **Authorization-Token** (we generate that now and don't confuse it with the Authentication Key from DeepL). According to Twitch's [Tutorial](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#authorization-code-grant-flow), to generate an Authorization-Token, we first use following URL:
 ```
 https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=YOUR_CLIENT_ID_PASTE_HERE&redirect_uri=http://localhost:3000&scope=chat:read+chat:edit&state=GENERATE_THIRTY_TWO_RANDOM_LETTERS_AND_NUMBERS_FOR_SECURITY
@@ -95,8 +93,8 @@ Write down the two values that are in my example-words **YOUR_ACCESS_TOKEN_IS_HE
 
 
 
-# STARTING/EXIT INSTRUCTIONS
-## Starting/Restarting
+## STARTING/EXIT INSTRUCTIONS
+### Starting/Restarting
 Open bash and change the current bash position to the repository folder. For example, if the repository path lies at:
 ```
 C:\Users\YourUsernameIsUsuallyHere\Downloads\gitProjects\TwitchTranslationChatBot
@@ -111,28 +109,30 @@ python translation.py
 ```
 Python should boot up the script then and if the bot says it's ready, then it's ready! For confirmation, the bot will post a boot-up message in your channel, too. 
 
-## Closing
+### Closing
 Just close the bash window
 
 
 
-# FUTURE GOALS 
-## Get rid of twitchio dependency
-The DeepL-Library is unavoidable. It's made for API-Requests, so that stays with the code. But I worry about the twitch.io dependency. If possible, then I would like to write my own IRC-Connection-Setup, which is a BIG goal. I still have to look into it that if it's even smart to do that. 
+## FEATURES
+- bot can translate from English to Japanese by prepending the '!ja' command
 
-## Simplify API-Credential-Acquisition
+
+
+## FUTURE GOALS 
+### Simplify API-Credential-Acquisition
 To state the obvious, it's a real pain to acquire the necessary API-Credentials. I wish it to be more convenient. For me and for those, who will use it, too. 
 
 
 
-# QUIRKS IN CODE
-## Japanese Filter
+## QUIRKS IN CODE
+### Japanese Filter
 The code is customized such that only japanese characters are recognized through a filter. If you ever want to use other source languages, then you've to remove the filter in the code itself. The filter uses a regex to recognize a [fixed set of japanese UTF-characters](http://www.rikai.com/library/kanjitables/kanji_codes.unicode.shtml). So the filter quality is highly dependend on that. Also, mixed languages are also coming through, as long as they have japanese characters. Meaning that a sentence like "遊びましょう please" will be recognized. 
 
-## Error Handling
+### Error Handling
 I currently use simple console outputs to give feedback on what happens and what might have caused an error. So no real try-throw-error-catching is done. 
 
 
 
-# CODE PHILOSOPHY
+## CODE PHILOSOPHY
 I might consider changing the translation API from DeepL to something less "pricey". DeepL offers a free API-Access, but the usage is limited and you need a credit card verification, which is really inconvenient for general public use. But this involves weighing out the pros and cons and doing comparisions. Currently, DeepL is fine, but I'll think about it. 
