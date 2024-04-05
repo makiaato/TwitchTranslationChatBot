@@ -2,8 +2,10 @@
 _This ReadMe was last reviewed on 4th April 2024_
 
 ## CURRENTLY WORKING ON
-- Reviewing Code and Instructions
-- Add example images to the instructions
+- reviewing Code and Instructions
+- add instruction-example-images to the readme
+- add demonstration images to the readme
+- probably make thousands of mini-commits for readme changes
 
 
 
@@ -12,7 +14,15 @@ This repository aims to set up and execute a chat bot for [twitch.tv](https://ww
 
 The goal of this script is the following: Execute Bot-Behavior via a registered Twitch-User. The behavior reads messages on a Twitch-Channel, ignore every message that isn't in Japanese (including japanese words written in latin letters), translate it to English with DeepL and post the result in the chat.
 
-The current state on how to use the repository is this: Enter personal credentials in a CSV-File, then open a bash terminal and execute the python script
+The current state on how to use the repository is this: Enter personal credentials in a CSV-File, then open a bash terminal and execute the python script.
+
+Constraints set by the Twitch-API: 
+- 20 messages per 30 seconds (unmodded bot)
+- 100 messages per 30 seconds (modded bot)
+- Refresh Tokens expire 30 days after generation
+
+Constraints set by the DeepL-API:
+- maximum of 500k characters per month
 
 
 
