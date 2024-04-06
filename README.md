@@ -66,7 +66,7 @@ http://localhost:3000/?code=THE_RELEVANT_AUTHORIZATION_CODE_IS_HERE&scope=chat%3
 ```
 Make sure that the template-word **YOUR_RANDOM_VALUE_SHOULD_RETURN_TO_YOU_HERE** is identical to your random entered value from before. If it's not, then you can't trust that response, else it's a true response from the Twtich-API. Now, copy the value you got for **THE_RELEVANT_AUTHORIZATION_CODE_IS_HERE** and save it somewhere secure, because that's your Authorization Token. Metaphorically, the authorization token is the trusted certificate that the Twitch-API recognizes as you being a valid user in the Twitch-API-Underworld. Something like a passport, along the lines. 
 
-5. Following Twitch's Instructions we now use a so called "cURL" to get our Access Token. Superficially and in short, it's an URL you can paste into programs, instead of a web browser. First, open your bash again (Windows-Key + R on Windws), copy the following example:
+5. Following Twitch's Instructions, we use a so called "cURL" to get our Access Token now. Superficially and in short, it's an URL you can paste into programs, instead of a web browser. First, open your bash again (Windows-Key + R on Windws), copy the following example:
 ```
 curl -X POST "https://id.twitch.tv/oauth2/token" -H "Content-Type: application/x-www-form-urlencoded" -d "client_id=YOUR_CLIENT_ID_PASTE_HERE&client_secret=YOUR_CLIENT_SECRET_PASTE_HERE&code=YOUR_AUTHORIZATION_CODE_PASTE_HERE&grant_type=authorization_code&redirect_uri=http://localhost:3000"
 ```
