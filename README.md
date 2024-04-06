@@ -50,7 +50,7 @@ You can close the bash then, if you wish.
 
 
 ## INITIALIZATION INSTRUCTIONS (FOR TWITCH)
-1. My script gets access to the Twitch-API by having an API-Access-Token. We can request one by having a Client-ID (we have that) and an **Authorization-Token** (we generate that now and don't confuse it with the Authentication Key from DeepL). According to Twitch's [Tutorial](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#authorization-code-grant-flow), to generate an Authorization-Token, we first use following URL:
+1. My script gets access to the Twitch-API by having an API-Access-Token. We can request one by having a Client-ID (we have that) and an **Authorization-Token** (we generate that now and don't confuse it with the Authentication Key from DeepL). According to Twitch's [Tutorial](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#authorization-code-grant-flow), to generate an Authorization-Token, we first use the following URL:
 ```
 https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=YOUR_CLIENT_ID_PASTE_HERE&redirect_uri=http://localhost:3000&scope=chat:read+chat:edit&state=GENERATE_THIRTY_TWO_RANDOM_LETTERS_AND_NUMBERS_FOR_SECURITY
 ```
