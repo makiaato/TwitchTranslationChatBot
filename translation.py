@@ -21,7 +21,7 @@ class Bot(commands.Bot):
 
     async def event_ready(self):
         # Bot says 'None' first, when no routine is set
-        print(f'Logged in as | {self.nick}')
+        print(f'Logged in as: {self.nick}')
         print('Bot is ready!')
         await self.get_channel(CHANNEL_URL).send('Translation-Bot is ready! SeriousSloth')
     
@@ -87,7 +87,7 @@ def is_access_token_valid():
 def refresh_access_token():    
     refresh_request_result = os.popen(f"curl -X POST \"https://id.twitch.tv/oauth2/token\" -H \"Content-Type: application/x-www-form-urlencoded\" -d \"grant_type=refresh_token&refresh_token={REFRESH_TOKEN}&client_id={CLIENT_ID}&client_secret={CLIENT_SECRET}\"").read()
     parsed_refresh_request_result = json.loads(refresh_request_result)
-    if 'access_token' in parsed_refresh_request_result:        
+    if 'access_token' in parsed_refresh_request_result:
         globals()['ACCESS_TOKEN'] = parsed_refresh_request_result['access_token']
         globals()['REFRESH_TOKEN'] = parsed_refresh_request_result['refresh_token']
     else:
@@ -105,10 +105,40 @@ def translate(source_text, source_l, target_l):
     if source_text_cleaned:        
         result = TRANSLATOR.translate_text(source_text, source_lang=source_l, target_lang=target_l)
         return result.text
+    
+def generate_access_token_request():
+    request_success = False
+    while not request_success:
+        print('Requesting Access Token for Twitch: Copy the following URL and paste it in your favourite browser.\n')
+        xref_hash = os.urandom(16).hex()
+        print(f"https://id.twitch.tv/oauth2/authorize?response_type=code&client_id={CLIENT_ID}&redirect_uri=http://localhost:3000&scope=chat:read+chat:edit&state={xref_hash}")
+        response = input("\nAfter authorizing, you'll land on an error page, but also get a response from Twitch back in your URL-bar. Paste the whole response in this console and press enter: ")
+        response_state_hash = response.split('state=')[-1]
+        if xref_hash != response_state_hash:
+            print('xref-check failed! Try again.\n')
+            continue
+        response_url = re.search(r'code=(.*?)&', response)
+        if response_url == None:
+            print('An invalid response URL was entered or authorization was denied. Try again.\n')
+            continue
+        authorization_code = response_url.group(1)
+        request_token_response = os.popen(f"curl -X POST \"https://id.twitch.tv/oauth2/token\" -H \"Content-Type: application/x-www-form-urlencoded\" -d \"client_id={CLIENT_ID}&client_secret={CLIENT_SECRET}&code={authorization_code}&grant_type=authorization_code&redirect_uri=http://localhost:3000\"").read()
+        parsed_request_token_response = json.loads(request_token_response)
+        if 'access_token' in parsed_request_token_response:
+            globals()['ACCESS_TOKEN'] = parsed_request_token_response['access_token']
+            globals()['REFRESH_TOKEN'] = parsed_request_token_response['refresh_token']
+        else:
+            print('Couldn\'t read Access Token from Twitch-API response. Access Token request failed. Script will start anew.\n')
+        write_credentials()
+        print('Successfully added Access Token and Refresh Token to credentials.')
+        request_success = True
 
 read_credentials()
+if ACCESS_TOKEN == '':
+    generate_access_token_request()
 if not is_access_token_valid():    
     refresh_access_token()
 TRANSLATOR = deepl.Translator(AUTH_KEY)
+
 bot = Bot()
 bot.run()

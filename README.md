@@ -1,9 +1,6 @@
-# TwitchTranslationChatBot v0.2.0-alpha
+# TwitchTranslationChatBot v0.3.0-beta
 ## CURRENTLY WORKING ON
-- reviewing Code and Instructions
-- add instruction-example-images to the readme
-- add demonstration images to the readme
-- probably make thousands of mini-commits for readme changes
+- definitely make thousands of mini-commits for readme changes
 
 
 
@@ -11,8 +8,6 @@
 This repository aims to set up and execute a chat bot for [twitch.tv](https://www.twitch.tv/). It's customized for the channel [@blluist](https://www.twitch.tv/blluist). Therefore, the bot will aim to translate japanese messages to English. Rōmaji words are excluded as good as possible for the translation. The bot uses DeepL for translation (**credit card verification** is needed for the free version of DeepL-API, but no cost-subscription will be made). This ReadMe is also written for people with zero knowlege in programming. Those who are more skilled, can quick read the first words of the instructions and skip the rest safely. Additionally, the code is pretty short circuited and written while being hungry. There is still much to be done manually on the human side, so it's more a script than a software (yet?). 
 
 The goal of this script is the following: Execute Bot-Behavior via a registered Twitch-User. The behavior reads messages on a Twitch-Channel, ignore every message that isn't in Japanese (including japanese words written in latin letters), translate it to English with DeepL and post the result in the chat.
-
-The current state on how to use the repository is this: Enter personal credentials in a CSV-File, then open a bash terminal and execute the python script.
 
 Constraints set by the Twitch-API: 
 - 20 messages per 30 seconds (unmodded bot)
@@ -49,79 +44,40 @@ You can close the bash then, if you wish.
 
 
 
-## INITIALIZATION INSTRUCTIONS (FOR TWITCH)
-1. My script gets access to the Twitch-API by having an API-Access-Token. We can request one by having a Client-ID (we have that) and an **Authorization-Token** (we generate that now and don't confuse it with the Authentication Key from DeepL). According to Twitch's [Tutorial](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#authorization-code-grant-flow), to generate an Authorization-Token, we first use the following URL:
-```
-https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=YOUR_CLIENT_ID_PASTE_HERE&redirect_uri=http://localhost:3000&scope=chat:read+chat:edit&state=GENERATE_THIRTY_TWO_RANDOM_LETTERS_AND_NUMBERS_FOR_SECURITY
-```
-Copy the URL and replace the template-words **YOUR_CLIENT_ID_PASTE_HERE** with your Client-ID and **GENERATE_THIRTY_TWO_RANDOM_LETTERS_AND_NUMBERS_FOR_SECURITY** with a random series of 32 characters, consisting of numbers and letters and write it down, too (it can look for example like this: a1b2c3d4e5f6g7h8i9j8k7l6). 
-
-2. After replacing the template-words, paste it in the URL-bar of your favourite browser. 
-
-3. When you have entered your modified URL, you will land on an Authorization Page you might be familiar with. The same name of your registered App in your Twitch-Developer Account should be found there, too. Authorize it, after you've verified the correct name and you'll land on a blank page or an error page after that, because we set that in the Twitch-App-Settings at the beginning (remember the "http://localhost:3000"). 
-
-4. You should be able to read your API-Response from the Twitch-API in the URL of your browser now, while being on that error-page. It should look like the following example:
-```
-http://localhost:3000/?code=THE_RELEVANT_AUTHORIZATION_CODE_IS_HERE&scope=chat%3Aread+chat%3Aedit&state=YOUR_RANDOM_VALUE_SHOULD_RETURN_TO_YOU_HERE
-```
-Make sure that the template-word **YOUR_RANDOM_VALUE_SHOULD_RETURN_TO_YOU_HERE** is identical to your random entered value from before. If it's not, then you can't trust that response, else it's a true response from the Twtich-API. Now, copy the value you got for **THE_RELEVANT_AUTHORIZATION_CODE_IS_HERE** and save it somewhere secure, because that's your Authorization Token. Metaphorically, the authorization token is the trusted certificate that the Twitch-API recognizes as you being a valid user in the Twitch-API-Underworld. Something like a passport, along the lines. 
-
-5. Following Twitch's Instructions, we use a so called "cURL" to get our Access Token now. Superficially and in short, it's an URL you can paste into programs, instead of a web browser. First, open your bash again (Windows-Key + R on Windws), copy the following example:
-```
-curl -X POST "https://id.twitch.tv/oauth2/token" -H "Content-Type: application/x-www-form-urlencoded" -d "client_id=YOUR_CLIENT_ID_PASTE_HERE&client_secret=YOUR_CLIENT_SECRET_PASTE_HERE&code=YOUR_AUTHORIZATION_CODE_PASTE_HERE&grant_type=authorization_code&redirect_uri=http://localhost:3000"
-```
-and replace the keywords **YOUR_CLIENT_ID_PASTE_HERE**, **YOUR_CLIENT_SECRET_PASTE_HERE** and **YOUR_AUTHORIZATION_CODE_PASTE_HERE**. 
-
-6. After modifiying the example, enter it in your shell. You'll get the following example response in your bash:
-```
-{"access_token":"YOUR_ACCESS_TOKEN_IS_HERE","expires_in":13895,"refresh_token":"YOUR_REFRESH_TOKEN_IS_HERE","scope":["chat:edit","chat:read"],"token_type":"bearer"}
-```
-Write down the two values that are in my example-words **YOUR_ACCESS_TOKEN_IS_HERE** and **YOUR_REFRESH_TOKEN_IS_HERE**. I may state the obvious, but still, both values are important, so keep them secretly. And with that, we got our own **Access Token** for the Twitch-API and another one, the **Refresh Token**, if our current one should expire (they expire in about 3-4 hours, but the script handles that). The hardest part is done, congratulations!
-
-7. Paste your relevant keys into the config_CHANGEME.csv (the file can be opened by Excel or similiar) directly under the respective categories/headers. You should have the following credentials ready now:
+## INITIALIZATION INSTRUCTIONS
+1. Paste your relevant keys into the config_CHANGEME.csv (the file can be opened by Excel or similiar) directly under the respective categories/headers. You should have the following credentials ready now:
    - CLIENT_ID (Twitch)
-   - CLIENT_SECRET (Twitch)
-   - ACCESS_TOKEN (Twitch)
-   - REFRESH_TOKEN (Twitch)
+   - CLIENT_SECRET (Twitch)   
    - AUTH_KEY (DeepL)
 
-8. Set *SOURCE_LANGUAGE* to **JA** and *TARGET_LANGUAGE* to **EN-US**. Also, set your channel by entering the channel name (not the whole URL, so instead of "twitch.tv/your_channel_name" use "your_channel_name" only). 
+2. Set *SOURCE_LANGUAGE* to **JA** and *TARGET_LANGUAGE* to **EN-US**. Also, set your channel by entering the channel name (not the whole URL, so instead of "twitch.tv/your_channel_name" use "your_channel_name" only). Let the other categories empty, the script will collect them for you. 
+![Example image of the config.csv file.](/example_images/example_01.png)
 
-9. Make sure to save as CSV-File, so **don't change the file type**!!
+3. Make sure to save as CSV-File, so **don't change the file type**!!
 
-10. Rename the file from *config_CHANGEME.csv* to **config.csv** and you're done with the installation! (A real software would've done all that for you.)
+4. Rename the file from *config_CHANGEME.csv* to **config.csv** and you're done with the installation! (A real software would've done all that for you.)
+
+5. Start the script by double-clicking the "start_on_windows.bat"-file. The script will give you further instructions that ought to be easy to follow.
+
+6. After finishing the steps in the console window, Python should boot up the script then and if the bot says it's ready, then it's ready! For confirmation, the bot will post a boot-up message in your channel, too.
 
 
 
 ## STARTING/EXIT INSTRUCTIONS
-### Starting/Restarting
-Open bash and change the current bash position to the repository folder. For example, if the repository path lies at:
-```
-C:\Users\YourUsernameIsUsuallyHere\Downloads\gitProjects\TwitchTranslationChatBot
-```
-then I would enter the following code to change the current directory of the bash to my target directory with the "cd" command:
-```
-cd C:\Users\YourUsernameIsUsuallyHere\Downloads\gitProjects\TwitchTranslationChatBot
-```
-Don't forget to replace *YourUsernameIsUsuallyHere* if you intend to copy my example. Now, in the correct directory, enter the following to start the script:
-```
-python translation.py
-```
-Python should boot up the script then and if the bot says it's ready, then it's ready! For confirmation, the bot will post a boot-up message in your channel, too. 
-
-### Closing
-Just close the bash window
+**Starting/Restarting**: Just double-click the "start_on_windows.bat"-file.
+**Closing**: Just close the bash window.
 
 
 
 ## FEATURES
 - bot can translate from English to Japanese by prepending the '!ja' command
+- bot is locally hosted and credentials are bound by account. This means that you can execute the script from any computer and as long as you keep the credentials with it, then the same bot will be used
 
 
 
 ## FUTURE GOALS 
-### Simplify API-Credential-Acquisition
-To state the obvious, it's a real pain to acquire the necessary API-Credentials. I wish it to be more convenient. For me and for those, who will use it, too. 
+### Waiting/Acquire Feedback
+The script freshly came out of its Alpha-Stage! I'll look around and ask people if they notice anything. 
 
 
 
@@ -135,4 +91,4 @@ I currently use simple console outputs to give feedback on what happens and what
 
 
 ## CODE PHILOSOPHY
-I might consider changing the translation API from DeepL to something less "pricey". DeepL offers a free API-Access, but the usage is limited and you need a credit card verification, which is really inconvenient for general public use. But this involves weighing out the pros and cons and doing comparisions. Currently, DeepL is fine, but I'll think about it. 
+I might consider changing the translation API from DeepL to something less "pricey". DeepL offers a free API-Access, but the usage is limited and you need a credit card verification, which is really inconvenient for general public use. But this involves weighing out the pros and cons and doing comparisions. Currently, DeepL is fine, but I'll think about it. I also prefer minimalistic code and lightweight processes, so a GUI won't be implemented. 
