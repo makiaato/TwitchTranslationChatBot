@@ -65,6 +65,7 @@ You can close the bash then, if you wish.
 
 ## STARTING/EXIT INSTRUCTIONS
 **Starting/Restarting**: Just double-click the "start_on_windows.bat"-file.
+
 **Closing**: Just close the bash window.
 
 
