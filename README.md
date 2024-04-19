@@ -1,4 +1,4 @@
-# TwitchTranslationChatBot v0.3.0-beta
+# TwitchTranslationChatBot v0.4.0-beta
 ## CURRENTLY WORKING ON
 - definitely make thousands of mini-commits for readme changes
 - thinking about something cool that would bump the major verision to v1.0.0
