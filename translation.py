@@ -22,7 +22,7 @@ class Bot(commands.Bot):
     async def event_ready(self):
         # Bot says 'None' first, when no routine is set
         print(f'Logged in as: {self.nick}')
-        print('Bot is ready!')
+        print(f'Now trying to post test message in channel: {self.nick}')
         await self.get_channel(CHANNEL_URL).send('Translation-Bot is ready! SeriousSloth')
     
     async def event_message(self, message):
@@ -42,15 +42,14 @@ class Bot(commands.Bot):
 
     @commands.command()
     async def ja(self, ctx: commands.Context, *, phrase: str):
-        translation_result = translate(phrase, TARGET_LANGUAGE, SOURCE_LANGUAGE)
+        translation_result = reverse_translate(phrase, TARGET_LANGUAGE, 'JA')
         if translation_result:
             await ctx.send(f'{ctx.author.name}: {translation_result}')
 
     @routines.routine(seconds=900.0)
     async def check_access_token():
         if not is_access_token_valid():    
-            refresh_access_token()
-    check_access_token.start()
+            refresh_access_token()    
 
 def read_credentials():
     with open('config.csv') as f:
@@ -91,19 +90,27 @@ def refresh_access_token():
         globals()['ACCESS_TOKEN'] = parsed_refresh_request_result['access_token']
         globals()['REFRESH_TOKEN'] = parsed_refresh_request_result['refresh_token']
     else:
-        print('Couldn\'t refresh Access Token. Check Refresh Token.')
+        print('Couldn\'t refresh Access Token. Check Refresh Token. Your Access Token might expire soon.')
+        return        
     write_credentials()
 
 def translate(source_text, source_l, target_l):
     if source_l == 'JA':
         source_text_cleaned = re.sub(r'[^\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]', '', source_text)
-    elif TRANSLATOR.translate_text(source_text, target_lang='EN-US').detected_source_lang == 'EN':        
-        source_l = 'EN' # DeepL-API recognizes only EN as source-value, no EN-US or EN-GB
+    else:
+        source_text_cleaned = source_text
+    if source_text_cleaned:
+        # DeepL-API recognizes only EN as source-value, no EN-US or EN-GB
+        result = TRANSLATOR.translate_text(source_text, source_lang=source_l[:2], target_lang=target_l)
+        return result.text
+    
+def reverse_translate(source_text, source_l, target_l):
+    if TRANSLATOR.translate_text(source_text, target_lang='EN-US').detected_source_lang == source_l[:2]:        
         source_text_cleaned = source_text
     else:
         return ''
     if source_text_cleaned:        
-        result = TRANSLATOR.translate_text(source_text, source_lang=source_l, target_lang=target_l)
+        result = TRANSLATOR.translate_text(source_text, source_lang=source_l[:2], target_lang=target_l)
         return result.text
     
 def generate_access_token_request():
@@ -115,7 +122,7 @@ def generate_access_token_request():
         response = input("\nAfter authorizing, you'll land on an error page, but also get a response from Twitch back in your URL-bar. Paste the whole response in this console and press enter: ")
         response_state_hash = response.split('state=')[-1]
         if xref_hash != response_state_hash:
-            print('xref-check failed! Try again.\n')
+            print('XRef-check failed! Try again.\n')
             continue
         response_url = re.search(r'code=(.*?)&', response)
         if response_url == None:
