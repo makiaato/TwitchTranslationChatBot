@@ -17,7 +17,8 @@ Constraints set by the Twitch-API:
 
 Constraints set by the DeepL-API:
 - maximum of 500k characters per month
-- supported languages and their tags: 
+- supported languages and their tags:
+
 | Source Tag | Target Tag | Language |
 | --- | --- | --- |
 | BG | BG | Bulgarian |
