@@ -17,39 +17,42 @@ Constraints set by the Twitch-API:
 
 Constraints set by the DeepL-API:
 - maximum of 500k characters per month
-- supported languages and their tags:
-
-| Source Tag | Target Tag | Language |
-| --- | --- | --- |
-| BG | BG | Bulgarian |
-| CS | CS | Czech |
-| DA | DA | Danish |
-| DE | DE | German |
-| EL | EL | Greek |
-| EN | EN-GB and EN-US | English |
-| ES | ES | Spanish |
-| ET | ET | Estonian |
-| FI | FI | Finnish |
-| FR | FR | French |
-| HU | HU | Hungarian |
-| ID | ID | Indonesian |
-| IT | IT | Italian |
-| JA | JA | Japanese |
-| KO | KO | Korean |
-| LT | LT | Lithuanian |
-| LV | LV | Latvian |
-| NB | NB | Norwegian (Bokmål) |
-| NL | NL | Dutch |
-| PL | PL | Polish |
-| PT | PT-BR and PT-PT | Portuguese (Brazilian & all other Portuguese varieties) |
-| RO | RO | Romanian |
-| RU | RU | Russian |
-| SK | SK | Slovak |
-| SL | SL | Slovenian |
-| SV | SV | Swedish |
-| TR | TR | Turkish |
-| UK | UK | Ukrainian |
-| ZH | ZH | Chinese (simplified) |
+   <details>
+   
+   <summary>Supported DeepL languages and their tags</summary>
+   
+   | Source Tag | Target Tag | Language |
+   | --- | --- | --- |
+   | BG | BG | Bulgarian |
+   | CS | CS | Czech |
+   | DA | DA | Danish |
+   | DE | DE | German |
+   | EL | EL | Greek |
+   | EN | EN-GB and EN-US | English |
+   | ES | ES | Spanish |
+   | ET | ET | Estonian |
+   | FI | FI | Finnish |
+   | FR | FR | French |
+   | HU | HU | Hungarian |
+   | ID | ID | Indonesian |
+   | IT | IT | Italian |
+   | JA | JA | Japanese |
+   | KO | KO | Korean |
+   | LT | LT | Lithuanian |
+   | LV | LV | Latvian |
+   | NB | NB | Norwegian (Bokmål) |
+   | NL | NL | Dutch |
+   | PL | PL | Polish |
+   | PT | PT-BR and PT-PT | Portuguese (Brazilian & all other Portuguese varieties) |
+   | RO | RO | Romanian |
+   | RU | RU | Russian |
+   | SK | SK | Slovak |
+   | SL | SL | Slovenian |
+   | SV | SV | Swedish |
+   | TR | TR | Turkish |
+   | UK | UK | Ukrainian |
+   | ZH | ZH | Chinese (simplified) |
+   </details>
 
 
 
