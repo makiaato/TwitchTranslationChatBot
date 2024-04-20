@@ -1,8 +1,10 @@
 config.csv
 config_fallback.csv
 
-translation.spec
+TwitchTranslationChatBot.spec
 dist/*
 build/*
 dist/
 build/
+
+BUILD.bat
