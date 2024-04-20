@@ -1,2 +1,8 @@
 config.csv
 config_fallback.csv
+
+translation.spec
+dist/*
+build/*
+dist/
+build/
