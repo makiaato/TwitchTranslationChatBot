@@ -120,7 +120,7 @@ I might consider changing the translation API from DeepL to something less "pric
 
 
 
-## Dependencies
+## DEPENDENCIES
 - Python [3.12.2](https://devguide.python.org/versions/)
 - TwitchIO [2.9.1](https://github.com/PythonistaGuild/TwitchIO)
 - DeepL-Python [1.17.0](https://github.com/DeepLcom/deepl-python)
