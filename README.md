@@ -1,6 +1,7 @@
 # TwitchTranslationChatBot v1.0.0
 ## CURRENTLY WORKING ON
 - definitely make thousands of mini-commits for readme changes
+- thinking about, how to encrypt user credentials
 
 
 
