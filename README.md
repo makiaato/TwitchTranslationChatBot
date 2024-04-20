@@ -117,3 +117,11 @@ I currently use simple console outputs to give feedback on what happens and what
 
 ## CODE PHILOSOPHY
 I might consider changing the translation API from DeepL to something less "pricey". DeepL offers a free API-Access, but the usage is limited and you need a credit card verification, which is really inconvenient for general public use. But so far, I guess it'll stay as is. I also prefer minimalistic code and lightweight processes, so a GUI won't be implemented. 
+
+
+
+## Dependencies
+- Python [3.12.2](https://devguide.python.org/versions/)
+- TwitchIO [2.9.1](https://github.com/PythonistaGuild/TwitchIO)
+- DeepL-Python [1.17.0](https://github.com/DeepLcom/deepl-python)
+- PyInstaller [6.6.0](https://github.com/pyinstaller/pyinstaller)
