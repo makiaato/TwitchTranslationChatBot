@@ -1,7 +1,6 @@
-# TwitchTranslationChatBot v1.0.0
+# TwitchTranslationChatBot v1.0.1
 ## CURRENTLY WORKING ON
-- definitely make thousands of mini-commits for readme changes
-- thinking about, how to encrypt user credentials
+- nothing in particular, just open for feedback
 
 
 
@@ -66,7 +65,7 @@ Constraints set by the DeepL-API:
 
 
 
-## INITIALIZATION INSTRUCTIONS
+## INITIALIZATION & SETUP INSTRUCTIONS
 1. Paste your relevant keys into the config_CHANGEME.csv (the file can be opened by Excel or similiar) directly under the respective categories/headers. You should have the following credentials ready now:
    - CLIENT_ID (Twitch)
    - CLIENT_SECRET (Twitch)   
@@ -79,7 +78,7 @@ Constraints set by the DeepL-API:
 
 4. Rename the file from *config_CHANGEME.csv* to **config.csv** and you're done with the installation!
 
-5. Start the bot by double-clicking the EXE-file. The console will give you further instructions that ought to be easy to follow.
+5. Start the bot by double-clicking the EXE-file. The console will give you further instructions that ought to be easy to follow for setup.
 
 6. After finishing the steps in the console window, if the bot says it's ready, then it's ready! For confirmation, the bot will post a boot-up message in your channel, too.
 
@@ -96,6 +95,7 @@ Constraints set by the DeepL-API:
 - bot can reverse translate from Source Langauge to Japanese by prepending the '!ja' command
 - bot is locally hosted and credentials are bound by account. This means that you can execute the script from any computer and as long as you keep the credentials with it, then the same bot will be used
 - EXE-file is made with [PyInstaller](https://pyinstaller.org/en/stable/)
+- bot can ignore messages from users when their nicknames are put into the ignore_list.csv
 
 
 

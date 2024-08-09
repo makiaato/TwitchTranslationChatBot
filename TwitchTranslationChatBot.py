@@ -15,6 +15,8 @@ AUTH_KEY = ''
 SOURCE_LANGUAGE = ''
 TARGET_LANGUAGE = ''
 CHANNEL_URL = ''
+TRANSLATOR = 0
+IGNORE_LIST = []
 
 class Bot(commands.Bot):
     def __init__(self):
@@ -23,11 +25,13 @@ class Bot(commands.Bot):
     async def event_ready(self):
         # Bot says 'None' first, when no routine is set
         print(f'\nLogged in as: {self.nick}')
-        print(f'Now trying to post test message in channel: {self.nick}')
+        print(f'Now trying to post test message in channel: {CHANNEL_URL}')
         await self.get_channel(CHANNEL_URL).send('Translation-Bot is ready! SeriousSloth')
     
     async def event_message(self, message):
         if message.echo:
+            return
+        if message.author.name.lower() in IGNORE_LIST:
             return
         await self.handle_commands(message)
         if message.content[:3] == '!ja':
@@ -72,7 +76,7 @@ def read_credentials():
                         globals()['SOURCE_LANGUAGE'] = row[5]
                         globals()['TARGET_LANGUAGE'] = row[6]
                         globals()['CHANNEL_URL'] = row[7]
-            print('CSV-File successfully found.')
+            print('config-File successfully read.')
             found_config = True
 
 def write_credentials():
@@ -153,7 +157,21 @@ def generate_access_token_request():
         print('Successfully added Access Token and Refresh Token to credentials.')
         request_success = True
 
+def read_ignore_list():    
+        try:
+            f = open('ignore_list.csv')
+        except FileNotFoundError:
+            print('Your ignore_list.csv couldn\'t be found. No users will be ignored.')
+        else:
+            with f:
+                csv_reader = csv.reader(f, delimiter=',')
+                for row in csv_reader:
+                    for cell in row:
+                        IGNORE_LIST.append(cell.lower())
+            print('ignore-File successfully read.')            
+
 read_credentials()
+read_ignore_list()
 if ACCESS_TOKEN == '':
     generate_access_token_request()
 if not is_access_token_valid():
