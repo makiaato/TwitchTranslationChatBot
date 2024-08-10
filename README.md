@@ -99,6 +99,11 @@ Constraints set by the DeepL-API:
 
 
 
+## CREDITS
+If you're using my software, then I would appreciate it, if you could provide the link to this repository (https://github.com/makiaato/TwitchTranslationChatBot) in your Twitch-Info-Panels. 
+
+
+
 ## FUTURE GOALS 
 ### Waiting/Acquire Feedback
 Nothing big planned so far, just casually looking out for bugs. 

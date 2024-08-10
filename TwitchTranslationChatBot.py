@@ -144,6 +144,7 @@ def generate_access_token_request():
         if response_url == None:
             print('An invalid response URL was entered or authorization was denied. Try again.')
             continue
+        # the re.search method retrieves every matching string and returns groups. So we just want the first and only group
         authorization_code = response_url.group(1)
         request_token_response = os.popen(f"curl -s -X POST \"https://id.twitch.tv/oauth2/token\" -H \"Content-Type: application/x-www-form-urlencoded\" -d \"client_id={CLIENT_ID}&client_secret={CLIENT_SECRET}&code={authorization_code}&grant_type=authorization_code&redirect_uri=http://localhost:3000\"").read()
         parsed_request_token_response = json.loads(request_token_response)
@@ -168,7 +169,8 @@ def read_ignore_list():
                 for row in csv_reader:
                     for cell in row:
                         IGNORE_LIST.append(cell.lower())
-            print('ignore-File successfully read.')            
+            IGNORE_LIST = [name for name in IGNORE_LIST if name]
+            print('ignore-File successfully read.')
 
 read_credentials()
 read_ignore_list()
