@@ -93,7 +93,7 @@ Constraints set by the DeepL-API:
 
 ## FEATURES
 - bot can reverse translate from Target Langauge to Japanese by prepending the '!ja' command
-- bot is locally hosted and credentials are bound by account. This means that you can execute the script from any computer and as long as you keep the credentials with it, then the same bot will be used
+- bot is locally hosted and credentials are bound by account. This means that you can execute the script from any computer and as long as you keep the credentials with it, the same bot will be used
 - EXE-file is made with [PyInstaller](https://pyinstaller.org/en/stable/)
 - bot can ignore messages from users when their nicknames are put into the ignore_list.csv
 
