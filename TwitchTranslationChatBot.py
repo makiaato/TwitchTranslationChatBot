@@ -86,7 +86,7 @@ class GeneralCommands(commands.Component):
 
 def translate(source_text, source_l, target_l):    
     if source_l == 'JA':
-        source_text_cleaned = re.sub(r'[^\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]', '', source_text)
+        source_text_cleaned = re.sub(r'[^\u3001-\u303f\u3041-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]', '', source_text)
     else:
         source_text_cleaned = source_text
     if source_text_cleaned:

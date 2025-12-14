@@ -1,8 +1,4 @@
-# TwitchTranslationChatBot v1.0.1
-## CURRENTLY WORKING ON
-- nothing in particular, just open for feedback
-
-
+# TwitchTranslationChatBot v1.1.0
 
 ## DESCRIPTION
 This repository aims to set up and execute a chat bot for [twitch.tv](https://www.twitch.tv/). It's customized for the channel [@blluist](https://www.twitch.tv/blluist). Therefore, the following tutorial will set up the bot with the aim to translate japanese messages to English. Rōmaji words are excluded as good as possible for the translation. But you can change the translation languages of course. The bot uses DeepL for translation (**credit card verification** is needed for the free version of DeepL-API, but no cost-subscription will be made). This ReadMe is also written for people with zero knowlege in programming. Those who are more skilled, can quick read the first words of the instructions and skip the rest safely. Additionally, the code is pretty short circuited and written while being hungry. 
@@ -71,7 +67,7 @@ Constraints set by the DeepL-API:
    - CLIENT_SECRET (Twitch)   
    - AUTH_KEY (DeepL)
 
-2. Set *SOURCE_LANGUAGE* to **JA** and *TARGET_LANGUAGE* to **EN-US** -- if you want to set other languages, you can change them there respectively. Also, set your channel by entering the channel name (not the whole URL, so instead of "twitch.tv/your_channel_name" use "your_channel_name" only). Let the other categories empty, the script will collect them for you. 
+2. Set *SOURCE_LANGUAGE* to **JA** and *TARGET_LANGUAGE* to **EN-US** -- if you want to set other languages, you can change them there respectively. Also, set your channel by entering the channel name (not the whole URL, so instead of "twitch.tv/your_channel_name" use "your_channel_name" only). Also, enter the Bot-Name under the "BOT_USERNAME" field. Let the other categories empty, the script will collect them for you. 
 ![Example image of the config.csv file.](/example_images/example_01.png)
 
 3. Make sure to save as CSV-File, so **don't change the file type**!!
@@ -104,18 +100,9 @@ If you're using my software, then I would appreciate it, if you could provide th
 
 
 
-## FUTURE GOALS 
-### Waiting/Acquire Feedback
-Nothing big planned so far, just casually looking out for bugs. 
-
-
-
 ## QUIRKS IN CODE
 ### Japanese Filter
 The code is customized such that only japanese characters are recognized through a filter, when you set the Source Language to Japanese. The filter uses a regex to recognize a [fixed set of japanese UTF-characters](http://www.rikai.com/library/kanjitables/kanji_codes.unicode.shtml). So the filter quality is highly dependend on that. Also, mixed languages in a sentence are also coming through with Japanese as Source Language, as long as they have japanese characters. Meaning that a sentence like "遊びましょう please" will be recognized and used as translation target. 
-
-### Error Handling
-I currently use simple console outputs to give feedback on what happens and what might have caused an error. So no real try-throw-error-catching is done. 
 
 
 
@@ -128,4 +115,4 @@ I might consider changing the translation API from DeepL to something less "pric
 - Python [3.13.11](https://devguide.python.org/versions/)
 - TwitchIO [3.1.0](https://github.com/PythonistaGuild/TwitchIO)
 - DeepL-Python [1.27.0](https://github.com/DeepLcom/deepl-python)
-- PyInstaller [6.6.0](https://github.com/pyinstaller/pyinstaller)
+- PyInstaller [6.17.0](https://github.com/pyinstaller/pyinstaller)
