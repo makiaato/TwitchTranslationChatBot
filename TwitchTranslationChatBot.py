@@ -1,8 +1,10 @@
 import os
+import requests
 import json
 import csv
 import re
 import sys
+from datetime import timedelta
 from twitchio.ext import commands
 from twitchio.ext import routines
 import deepl 
@@ -11,16 +13,26 @@ CLIENT_ID = ''
 CLIENT_SECRET = ''
 ACCESS_TOKEN = ''
 REFRESH_TOKEN = ''
+CHANNEL_URL = ''
+BOT_USERNAME = ''
+CHANNEL_USER_ID = ''
+BOT_USER_ID = ''
+
 AUTH_KEY = ''
+TRANSLATOR = 0
 SOURCE_LANGUAGE = ''
 TARGET_LANGUAGE = ''
-CHANNEL_URL = ''
-TRANSLATOR = 0
+
 IGNORE_LIST = []
 
 class Bot(commands.Bot):
-    def __init__(self):
-        super().__init__(token=ACCESS_TOKEN, prefix='!', initial_channels=[CHANNEL_URL])
+    def __init__(self):        
+        super().__init__(
+            client_id=CLIENT_ID,
+            client_secret=CLIENT_SECRET,
+            bot_id=BOT_USER_ID,
+            prefix="!"
+        )
 
     async def event_ready(self):
         # Bot says 'None' first, when no routine is set
@@ -51,7 +63,7 @@ class Bot(commands.Bot):
         if translation_result:
             await ctx.send(f'{ctx.author.name}: {translation_result}')
 
-    @routines.routine(seconds=900.0)
+    @routines.routine(delta=timedelta(minutes=15))
     async def check_access_token():
         if not is_access_token_valid():    
             refresh_access_token()    
@@ -76,14 +88,15 @@ def read_credentials():
                         globals()['SOURCE_LANGUAGE'] = row[5]
                         globals()['TARGET_LANGUAGE'] = row[6]
                         globals()['CHANNEL_URL'] = row[7]
+                        globals()['BOT_USERNAME'] = row[8]
             print('config-File successfully read.')
             found_config = True
 
 def write_credentials():
     with open('config.csv', 'w', newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(['CLIENT_ID', 'CLIENT_SECRET', 'ACCESS_TOKEN', 'REFRESH_TOKEN', 'AUTH_KEY', 'SOURCE_LANGUAGE', 'TARGET_LANGUAGE', 'CHANNEL_URL'])
-        writer.writerow([CLIENT_ID, CLIENT_SECRET, ACCESS_TOKEN, REFRESH_TOKEN, AUTH_KEY, SOURCE_LANGUAGE, TARGET_LANGUAGE, CHANNEL_URL])
+        writer.writerow(['CLIENT_ID', 'CLIENT_SECRET', 'ACCESS_TOKEN', 'REFRESH_TOKEN', 'AUTH_KEY', 'SOURCE_LANGUAGE', 'TARGET_LANGUAGE', 'CHANNEL_URL', 'BOT_USERNAME'])
+        writer.writerow([CLIENT_ID, CLIENT_SECRET, ACCESS_TOKEN, REFRESH_TOKEN, AUTH_KEY, SOURCE_LANGUAGE, TARGET_LANGUAGE, CHANNEL_URL, BOT_USERNAME])
     print('Successfully refreshed credentials.')
 
 def is_access_token_valid():
@@ -158,7 +171,8 @@ def generate_access_token_request():
         print('Successfully added Access Token and Refresh Token to credentials.')
         request_success = True
 
-def read_ignore_list():    
+def read_ignore_list():
+        global IGNORE_LIST
         try:
             f = open('ignore_list.csv')
         except FileNotFoundError:
@@ -172,13 +186,34 @@ def read_ignore_list():
             IGNORE_LIST = [name for name in IGNORE_LIST if name]
             print('ignore-File successfully read.')
 
+def fetch_user_ids():
+    print('Attempting to fetch User-IDs ...')
+    url = f"https://api.twitch.tv/helix/users?login={CHANNEL_URL}&login={BOT_USERNAME}"
+    headers = {
+    "Authorization": f"Bearer {ACCESS_TOKEN}",
+    "Client-Id": CLIENT_ID
+    }
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    parsed_get_users_result = response.json()    
+    if 'data' in parsed_get_users_result:
+        print(parsed_get_users_result)
+        globals()['CHANNEL_USER_ID'] = parsed_get_users_result['data'][0]['id']
+        globals()['BOT_USER_ID'] = parsed_get_users_result['data'][1]['id']                
+    else:
+        input('Couldn\'t fetch User-IDs. Check Channel_Url and Bot_Username. Pressing enter will close the script.')
+        sys.exit()
+
+# Script starts here
 read_credentials()
 read_ignore_list()
 if ACCESS_TOKEN == '':
     generate_access_token_request()
 if not is_access_token_valid():
     refresh_access_token()
-TRANSLATOR = deepl.Translator(AUTH_KEY)
+fetch_user_ids()
 
-bot = Bot()
-bot.run()
+# TRANSLATOR = deepl.Translator(AUTH_KEY)
+
+# bot = Bot()
+# bot.run()

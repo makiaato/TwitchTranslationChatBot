@@ -125,7 +125,7 @@ I might consider changing the translation API from DeepL to something less "pric
 
 
 ## DEPENDENCIES
-- Python [3.12.2](https://devguide.python.org/versions/)
-- TwitchIO [2.9.1](https://github.com/PythonistaGuild/TwitchIO)
-- DeepL-Python [1.17.0](https://github.com/DeepLcom/deepl-python)
+- Python [3.13.11](https://devguide.python.org/versions/)
+- TwitchIO [3.1.0](https://github.com/PythonistaGuild/TwitchIO)
+- DeepL-Python [1.27.0](https://github.com/DeepLcom/deepl-python)
 - PyInstaller [6.6.0](https://github.com/pyinstaller/pyinstaller)
