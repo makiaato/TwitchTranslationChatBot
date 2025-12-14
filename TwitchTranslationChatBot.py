@@ -3,7 +3,7 @@ import requests
 import csv
 import re
 import sys
-import deepl 
+import deepl
 import asyncio
 from datetime import timedelta
 from twitchio import eventsub
@@ -38,29 +38,30 @@ class Bot(commands.Bot):
         )
 
     async def setup_hook(self):
-        print('setup_hook got called')
-        await self.add_component(GeneralCommands())
-        self.check_access_token.start()
+        print('Calling setup_hook ...')        
         chat = eventsub.ChatMessageSubscription(broadcaster_user_id=CHANNEL_USER_ID, user_id=BOT_USER_ID)
         await self.subscribe_websocket(chat, as_bot=True)
+        # await self.add_component(GeneralCommands())
+        self.check_access_token.start()
 
     async def event_ready(self):        
-        print(f'Trying to post test message in channel: {CHANNEL_URL} as {self.user}')
+        print(f"Trying to post test message in channel: {CHANNEL_URL} as {self.user}")
         self.channel_partial_user = self.create_partialuser(user_id=CHANNEL_USER_ID)
         await self.channel_partial_user.send_message(sender=BOT_USER_ID, message="Translation-Bot is awake! CoolStoryBob (v1.1.0)")
 
-    async def event_message(self, message):
-        """
+    async def event_message(self, message):        
         if message.chatter.id == BOT_USER_ID:            
-            return
-        """
+            return        
         if message.chatter.name.lower() in IGNORE_LIST:            
             return        
-        if message.text[:3] == '!ja':            
-            return
-        translation_result = translate(message.text, SOURCE_LANGUAGE, TARGET_LANGUAGE)        
-        if translation_result:            
-            await message.channel.send(f'{message.author.name}: {translation_result}')
+        if message.text[:4] == '!ja ':
+            translation_result = reverse_translate(message.text[4:], TARGET_LANGUAGE, 'JA')
+            if translation_result:
+                await self.channel_partial_user.send_message(sender=BOT_USER_ID, message=f"{message.chatter.name}: {translation_result}")
+                return        
+        translation_result = translate(message.text, SOURCE_LANGUAGE, TARGET_LANGUAGE)
+        if translation_result:
+            await self.channel_partial_user.send_message(sender=BOT_USER_ID, message=f"{message.chatter.name}: {translation_result}")
         
     async def event_command_error(self, context: commands.Context, error: Exception):
         if isinstance(error, commands.CommandNotFound):
@@ -72,14 +73,16 @@ class Bot(commands.Bot):
         if not is_access_token_valid():    
             refresh_access_token()
 
-class GeneralCommands(commands.Component):
+"""
+Doesn't work. Don't know why!
+
+class GeneralCommands(commands.Component):        
     @commands.command()
-    async def ja(self, ctx: commands.Context[Bot], *, message: str):
-        # todo
-        print('entered !ja command')
+    async def ja(self, ctx: commands.Context, *, message: str):        
         translation_result = reverse_translate(message, TARGET_LANGUAGE, 'JA')
-        if translation_result:            
-            await ctx.send(f'{ctx.chatter}: {translation_result}')
+        if translation_result:
+            await ctx.send(f"{ctx.chatter}: {translation_result}")
+"""
 
 def translate(source_text, source_l, target_l):    
     if source_l == 'JA':
@@ -87,6 +90,7 @@ def translate(source_text, source_l, target_l):
     else:
         source_text_cleaned = source_text
     if source_text_cleaned:
+        # we enter this if-bracket only, if there is any Japanese characters left in the regex-substitution before
         # DeepL-API recognizes only EN as source-value, no EN-US or EN-GB
         result = TRANSLATOR.translate_text(source_text, source_lang=source_l[:2], target_lang=target_l)
         return result.text
@@ -96,7 +100,8 @@ def reverse_translate(source_text, source_l, target_l):
         source_text_cleaned = source_text
     else:
         return ''
-    if source_text_cleaned:        
+    if source_text_cleaned:
+        # same as forward translation. Enter here only if there was text left to translate
         result = TRANSLATOR.translate_text(source_text, source_lang=source_l[:2], target_lang=target_l)
         return result.text
 
@@ -132,6 +137,7 @@ def write_credentials():
     print('Successfully refreshed credentials.')
 
 def read_ignore_list():
+        # we got an error where python couldn't differentiate between local and global variable, because .append does assignment
         global IGNORE_LIST
         try:
             f = open('ignore_list.csv')
@@ -158,7 +164,7 @@ def fetch_user_ids():
     parsed_get_users_result = response.json()
     if 'data' in parsed_get_users_result:        
         globals()['CHANNEL_USER_ID'] = parsed_get_users_result['data'][0]['id']
-        # to do, revert to index 1
+        # to do, revert to index 1 Beware to change the index if we want to debug and use our own channel as bot
         globals()['BOT_USER_ID'] = parsed_get_users_result['data'][0]['id']
         print('User-IDs fetched!')
     else:
@@ -187,6 +193,7 @@ def generate_access_token_request():
     while not request_success:
         print('Requesting Access Token for Twitch: Copy the following URL and paste it in your favourite browser.\n')
         xref_hash = secrets.token_hex(16)
+        # scope names changed through time, beware!
         print(f"https://id.twitch.tv/oauth2/authorize?response_type=code&client_id={CLIENT_ID}&redirect_uri=http://localhost:3000&scope=user:read:chat+user:write:chat+user:bot&state={xref_hash}")
         response = input("\nAfter authorizing, you'll land on an error page/forward page, but also get a response from Twitch back in your URL-bar after a bit. Copy-Paste the whole url-response in this console and press enter: ")
         response_state_hash = response.split('state=')[-1]
@@ -250,8 +257,10 @@ def main():
         refresh_access_token()
     fetch_user_ids()
 
+    # deepl-library sometimes changes the auth-key call, beware!
     globals()['TRANSLATOR'] = deepl.DeepLClient(AUTH_KEY)
 
+    # recently, twitch io works via async and eventsub / websocket
     async def runner():
             bot = Bot()
             await bot.add_token(ACCESS_TOKEN, REFRESH_TOKEN)
