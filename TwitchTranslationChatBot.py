@@ -3,10 +3,12 @@ import requests
 import csv
 import re
 import sys
+import deepl 
+import asyncio
 from datetime import timedelta
+from twitchio import eventsub
 from twitchio.ext import commands
 from twitchio.ext import routines
-import deepl 
 
 CLIENT_ID = ''
 CLIENT_SECRET = ''
@@ -25,7 +27,9 @@ TARGET_LANGUAGE = ''
 IGNORE_LIST = []
 
 class Bot(commands.Bot):
-    def __init__(self):        
+    channel_partial_user = 0
+
+    def __init__(self):
         super().__init__(
             client_id=CLIENT_ID,
             client_secret=CLIENT_SECRET,
@@ -33,22 +37,29 @@ class Bot(commands.Bot):
             prefix="!"
         )
 
-    async def event_ready(self):
-        # Bot says 'None' first, when no routine is set
-        print(f'\nLogged in as: {self.nick}')
-        print(f'Now trying to post test message in channel: {CHANNEL_URL}')
-        await self.get_channel(CHANNEL_URL).send('Translation-Bot is ready! SeriousSloth')
-    
+    async def setup_hook(self):
+        print('setup_hook got called')
+        await self.add_component(GeneralCommands())
+        self.check_access_token.start()
+        chat = eventsub.ChatMessageSubscription(broadcaster_user_id=CHANNEL_USER_ID, user_id=BOT_USER_ID)
+        await self.subscribe_websocket(chat, as_bot=True)
+
+    async def event_ready(self):        
+        print(f'Trying to post test message in channel: {CHANNEL_URL} as {self.user}')
+        self.channel_partial_user = self.create_partialuser(user_id=CHANNEL_USER_ID)
+        await self.channel_partial_user.send_message(sender=BOT_USER_ID, message="Translation-Bot is awake! CoolStoryBob (v1.1.0)")
+
     async def event_message(self, message):
-        if message.echo:
+        """
+        if message.chatter.id == BOT_USER_ID:            
             return
-        if message.author.name.lower() in IGNORE_LIST:
+        """
+        if message.chatter.name.lower() in IGNORE_LIST:            
+            return        
+        if message.text[:3] == '!ja':            
             return
-        await self.handle_commands(message)
-        if message.content[:3] == '!ja':
-            return
-        translation_result = translate(message.content, SOURCE_LANGUAGE, TARGET_LANGUAGE)        
-        if translation_result:
+        translation_result = translate(message.text, SOURCE_LANGUAGE, TARGET_LANGUAGE)        
+        if translation_result:            
             await message.channel.send(f'{message.author.name}: {translation_result}')
         
     async def event_command_error(self, context: commands.Context, error: Exception):
@@ -56,18 +67,21 @@ class Bot(commands.Bot):
             return
         print(error)
 
-    @commands.command()
-    async def ja(self, ctx: commands.Context, *, phrase: str):
-        translation_result = reverse_translate(phrase, TARGET_LANGUAGE, 'JA')
-        if translation_result:
-            await ctx.send(f'{ctx.author.name}: {translation_result}')
-
     @routines.routine(delta=timedelta(minutes=15))
-    async def check_access_token():
+    async def check_access_token(self):
         if not is_access_token_valid():    
-            refresh_access_token()    
+            refresh_access_token()
 
-def translate(source_text, source_l, target_l):
+class GeneralCommands(commands.Component):
+    @commands.command()
+    async def ja(self, ctx: commands.Context[Bot], *, message: str):
+        # todo
+        print('entered !ja command')
+        translation_result = reverse_translate(message, TARGET_LANGUAGE, 'JA')
+        if translation_result:            
+            await ctx.send(f'{ctx.chatter}: {translation_result}')
+
+def translate(source_text, source_l, target_l):    
     if source_l == 'JA':
         source_text_cleaned = re.sub(r'[^\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]', '', source_text)
     else:
@@ -144,7 +158,8 @@ def fetch_user_ids():
     parsed_get_users_result = response.json()
     if 'data' in parsed_get_users_result:        
         globals()['CHANNEL_USER_ID'] = parsed_get_users_result['data'][0]['id']
-        globals()['BOT_USER_ID'] = parsed_get_users_result['data'][1]['id']
+        # to do, revert to index 1
+        globals()['BOT_USER_ID'] = parsed_get_users_result['data'][0]['id']
         print('User-IDs fetched!')
     else:
         input('Couldn\'t fetch User-IDs. Check Channel_Url and Bot_Username. Pressing enter will close the script.')
@@ -166,33 +181,13 @@ def is_access_token_valid():
     else:        
         print('Access Token has expired (or has no expiration value).')
         return False
-
-def refresh_access_token():
-    print('Attempting to request new tokens ...')
-    url = "https://id.twitch.tv/oauth2/token"
-    data = {                    
-        "client_id": CLIENT_ID,
-        "client_secret": CLIENT_SECRET,        
-        "grant_type": "refresh_token",
-        "refresh_token": REFRESH_TOKEN        
-    }
-    response = requests.post(url, data=data)
-    response.raise_for_status()
-    parsed_refresh_request_result = response.json()    
-    if 'access_token' in parsed_refresh_request_result:
-        globals()['ACCESS_TOKEN'] = parsed_refresh_request_result['access_token']
-        globals()['REFRESH_TOKEN'] = parsed_refresh_request_result['refresh_token']
-        write_credentials()
-    else:
-        input('Couldn\'t refresh Access Token. Check Refresh Token. Pressing enter will close the script.')
-        sys.exit()
     
 def generate_access_token_request():
     request_success = False
     while not request_success:
         print('Requesting Access Token for Twitch: Copy the following URL and paste it in your favourite browser.\n')
         xref_hash = secrets.token_hex(16)
-        print(f"https://id.twitch.tv/oauth2/authorize?response_type=code&client_id={CLIENT_ID}&redirect_uri=http://localhost:3000&scope=chat:read+chat:edit&state={xref_hash}")
+        print(f"https://id.twitch.tv/oauth2/authorize?response_type=code&client_id={CLIENT_ID}&redirect_uri=http://localhost:3000&scope=user:read:chat+user:write:chat+user:bot&state={xref_hash}")
         response = input("\nAfter authorizing, you'll land on an error page/forward page, but also get a response from Twitch back in your URL-bar after a bit. Copy-Paste the whole url-response in this console and press enter: ")
         response_state_hash = response.split('state=')[-1]
         if xref_hash != response_state_hash:
@@ -226,16 +221,42 @@ def generate_access_token_request():
         print('Successfully added Access Token and Refresh Token to credentials.')
         request_success = True
 
-# ================ SCRIPT STARTS HERE ================ 
-read_credentials()
-read_ignore_list()
-if ACCESS_TOKEN == '':
-    generate_access_token_request()
-if not is_access_token_valid():
-    refresh_access_token()
-fetch_user_ids()
+def refresh_access_token():
+    print('Attempting to request new tokens ...')
+    url = "https://id.twitch.tv/oauth2/token"
+    data = {                    
+        "client_id": CLIENT_ID,
+        "client_secret": CLIENT_SECRET,        
+        "grant_type": "refresh_token",
+        "refresh_token": REFRESH_TOKEN        
+    }
+    response = requests.post(url, data=data)
+    response.raise_for_status()
+    parsed_refresh_request_result = response.json()    
+    if 'access_token' in parsed_refresh_request_result:
+        globals()['ACCESS_TOKEN'] = parsed_refresh_request_result['access_token']
+        globals()['REFRESH_TOKEN'] = parsed_refresh_request_result['refresh_token']
+        write_credentials()
+    else:
+        input('Couldn\'t refresh Access Token. Check Refresh Token. Pressing enter will close the script.')
+        sys.exit()
 
-TRANSLATOR = deepl.DeepLClient(AUTH_KEY)
+def main():
+    read_credentials()
+    read_ignore_list()
+    if ACCESS_TOKEN == '':
+        generate_access_token_request()
+    if not is_access_token_valid():
+        refresh_access_token()
+    fetch_user_ids()
 
-# bot = Bot()
-# bot.run()
+    globals()['TRANSLATOR'] = deepl.DeepLClient(AUTH_KEY)
+
+    async def runner():
+            bot = Bot()
+            await bot.add_token(ACCESS_TOKEN, REFRESH_TOKEN)
+            await bot.start(load_tokens=False)
+    asyncio.run(runner())
+
+if __name__ == "__main__":
+    main()
