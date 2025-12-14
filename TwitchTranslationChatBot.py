@@ -1,6 +1,5 @@
-import os
+import secrets
 import requests
-import json
 import csv
 import re
 import sys
@@ -68,6 +67,25 @@ class Bot(commands.Bot):
         if not is_access_token_valid():    
             refresh_access_token()    
 
+def translate(source_text, source_l, target_l):
+    if source_l == 'JA':
+        source_text_cleaned = re.sub(r'[^\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]', '', source_text)
+    else:
+        source_text_cleaned = source_text
+    if source_text_cleaned:
+        # DeepL-API recognizes only EN as source-value, no EN-US or EN-GB
+        result = TRANSLATOR.translate_text(source_text, source_lang=source_l[:2], target_lang=target_l)
+        return result.text
+    
+def reverse_translate(source_text, source_l, target_l):
+    if TRANSLATOR.translate_text(source_text, target_lang='EN-US').detected_source_lang == source_l[:2]:        
+        source_text_cleaned = source_text
+    else:
+        return ''
+    if source_text_cleaned:        
+        result = TRANSLATOR.translate_text(source_text, source_lang=source_l[:2], target_lang=target_l)
+        return result.text
+
 def read_credentials():
     found_config = False
     while not found_config:
@@ -99,78 +117,6 @@ def write_credentials():
         writer.writerow([CLIENT_ID, CLIENT_SECRET, ACCESS_TOKEN, REFRESH_TOKEN, AUTH_KEY, SOURCE_LANGUAGE, TARGET_LANGUAGE, CHANNEL_URL, BOT_USERNAME])
     print('Successfully refreshed credentials.')
 
-def is_access_token_valid():
-    validation_result = os.popen(f"curl -s -X GET \"https://id.twitch.tv/oauth2/validate\" -H \"Authorization: OAuth {ACCESS_TOKEN}\"").read()
-    parsed_validation_result = json.loads(validation_result)
-    if 'expires_in' in parsed_validation_result:
-        if parsed_validation_result['expires_in'] > 2400:
-            return True
-        else:
-            return False
-    else:        
-        print('Access Token has expired (or has no expiration value).')
-        return False
-
-def refresh_access_token():
-    print('Attempting to request new tokens ...')
-    refresh_request_result = os.popen(f"curl -s -X POST \"https://id.twitch.tv/oauth2/token\" -H \"Content-Type: application/x-www-form-urlencoded\" -d \"grant_type=refresh_token&refresh_token={REFRESH_TOKEN}&client_id={CLIENT_ID}&client_secret={CLIENT_SECRET}\"").read()
-    parsed_refresh_request_result = json.loads(refresh_request_result)
-    if 'access_token' in parsed_refresh_request_result:
-        globals()['ACCESS_TOKEN'] = parsed_refresh_request_result['access_token']
-        globals()['REFRESH_TOKEN'] = parsed_refresh_request_result['refresh_token']
-        write_credentials()
-    else:
-        input('Couldn\'t refresh Access Token. Check Refresh Token. Pressing enter will close the script.')
-        sys.exit()
-
-def translate(source_text, source_l, target_l):
-    if source_l == 'JA':
-        source_text_cleaned = re.sub(r'[^\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf\u3400-\u4dbf]', '', source_text)
-    else:
-        source_text_cleaned = source_text
-    if source_text_cleaned:
-        # DeepL-API recognizes only EN as source-value, no EN-US or EN-GB
-        result = TRANSLATOR.translate_text(source_text, source_lang=source_l[:2], target_lang=target_l)
-        return result.text
-    
-def reverse_translate(source_text, source_l, target_l):
-    if TRANSLATOR.translate_text(source_text, target_lang='EN-US').detected_source_lang == source_l[:2]:        
-        source_text_cleaned = source_text
-    else:
-        return ''
-    if source_text_cleaned:        
-        result = TRANSLATOR.translate_text(source_text, source_lang=source_l[:2], target_lang=target_l)
-        return result.text
-    
-def generate_access_token_request():
-    request_success = False
-    while not request_success:
-        print('Requesting Access Token for Twitch: Copy the following URL and paste it in your favourite browser.\n')
-        xref_hash = os.urandom(16).hex()
-        print(f"https://id.twitch.tv/oauth2/authorize?response_type=code&client_id={CLIENT_ID}&redirect_uri=http://localhost:3000&scope=chat:read+chat:edit&state={xref_hash}")
-        response = input("\nAfter authorizing, you'll land on an error page, but also get a response from Twitch back in your URL-bar. Paste the whole response in this console and press enter: ")
-        response_state_hash = response.split('state=')[-1]
-        if xref_hash != response_state_hash:
-            print('XRef-check failed! Try again.')
-            continue
-        response_url = re.search(r'code=(.*?)&', response)
-        if response_url == None:
-            print('An invalid response URL was entered or authorization was denied. Try again.')
-            continue
-        # the re.search method retrieves every matching string and returns groups. So we just want the first and only group
-        authorization_code = response_url.group(1)
-        request_token_response = os.popen(f"curl -s -X POST \"https://id.twitch.tv/oauth2/token\" -H \"Content-Type: application/x-www-form-urlencoded\" -d \"client_id={CLIENT_ID}&client_secret={CLIENT_SECRET}&code={authorization_code}&grant_type=authorization_code&redirect_uri=http://localhost:3000\"").read()
-        parsed_request_token_response = json.loads(request_token_response)
-        if 'access_token' in parsed_request_token_response:
-            globals()['ACCESS_TOKEN'] = parsed_request_token_response['access_token']
-            globals()['REFRESH_TOKEN'] = parsed_request_token_response['refresh_token']
-        else:
-            print('Couldn\'t read Access Token from Twitch-API response. Access Token request failed. Script will start anew.')
-            continue
-        write_credentials()
-        print('Successfully added Access Token and Refresh Token to credentials.')
-        request_success = True
-
 def read_ignore_list():
         global IGNORE_LIST
         try:
@@ -190,21 +136,97 @@ def fetch_user_ids():
     print('Attempting to fetch User-IDs ...')
     url = f"https://api.twitch.tv/helix/users?login={CHANNEL_URL}&login={BOT_USERNAME}"
     headers = {
-    "Authorization": f"Bearer {ACCESS_TOKEN}",
-    "Client-Id": CLIENT_ID
+        "Authorization": f"Bearer {ACCESS_TOKEN}",
+        "Client-Id": CLIENT_ID
     }
     response = requests.get(url, headers=headers)
     response.raise_for_status()
-    parsed_get_users_result = response.json()    
-    if 'data' in parsed_get_users_result:
-        print(parsed_get_users_result)
+    parsed_get_users_result = response.json()
+    if 'data' in parsed_get_users_result:        
         globals()['CHANNEL_USER_ID'] = parsed_get_users_result['data'][0]['id']
-        globals()['BOT_USER_ID'] = parsed_get_users_result['data'][1]['id']                
+        globals()['BOT_USER_ID'] = parsed_get_users_result['data'][1]['id']
+        print('User-IDs fetched!')
     else:
         input('Couldn\'t fetch User-IDs. Check Channel_Url and Bot_Username. Pressing enter will close the script.')
         sys.exit()
 
-# Script starts here
+def is_access_token_valid():
+    url = "https://id.twitch.tv/oauth2/validate"
+    headers = {
+        "Authorization": f"OAuth {ACCESS_TOKEN}"
+    }
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    parsed_validation_result = response.json()    
+    if 'expires_in' in parsed_validation_result:
+        if parsed_validation_result['expires_in'] > 2400:
+            return True
+        else:
+            return False
+    else:        
+        print('Access Token has expired (or has no expiration value).')
+        return False
+
+def refresh_access_token():
+    print('Attempting to request new tokens ...')
+    url = "https://id.twitch.tv/oauth2/token"
+    data = {                    
+        "client_id": CLIENT_ID,
+        "client_secret": CLIENT_SECRET,        
+        "grant_type": "refresh_token",
+        "refresh_token": REFRESH_TOKEN        
+    }
+    response = requests.post(url, data=data)
+    response.raise_for_status()
+    parsed_refresh_request_result = response.json()    
+    if 'access_token' in parsed_refresh_request_result:
+        globals()['ACCESS_TOKEN'] = parsed_refresh_request_result['access_token']
+        globals()['REFRESH_TOKEN'] = parsed_refresh_request_result['refresh_token']
+        write_credentials()
+    else:
+        input('Couldn\'t refresh Access Token. Check Refresh Token. Pressing enter will close the script.')
+        sys.exit()
+    
+def generate_access_token_request():
+    request_success = False
+    while not request_success:
+        print('Requesting Access Token for Twitch: Copy the following URL and paste it in your favourite browser.\n')
+        xref_hash = secrets.token_hex(16)
+        print(f"https://id.twitch.tv/oauth2/authorize?response_type=code&client_id={CLIENT_ID}&redirect_uri=http://localhost:3000&scope=chat:read+chat:edit&state={xref_hash}")
+        response = input("\nAfter authorizing, you'll land on an error page/forward page, but also get a response from Twitch back in your URL-bar after a bit. Copy-Paste the whole url-response in this console and press enter: ")
+        response_state_hash = response.split('state=')[-1]
+        if xref_hash != response_state_hash:
+            print('XRef-check failed! Try again.')
+            continue
+        response_url = re.search(r'code=(.*?)&', response)
+        if response_url == None:
+            print('An invalid response URL was entered or authorization was denied. Try again.')
+            continue
+        # the re.search method retrieves every matching string and returns groups. So we just want the first and only group
+        authorization_code = response_url.group(1)
+        url = f"https://id.twitch.tv/oauth2/token"
+        data = {            
+            "Authorization": f"Bearer {ACCESS_TOKEN}",
+            "client_id": CLIENT_ID,
+            "client_secret": CLIENT_SECRET,
+            "code": authorization_code,
+            "grant_type": "authorization_code",
+            "redirect_uri": "http://localhost:3000"
+        }
+        response = requests.post(url, data=data)
+        response.raise_for_status()
+        parsed_request_token_response = response.json()                
+        if 'access_token' in parsed_request_token_response:
+            globals()['ACCESS_TOKEN'] = parsed_request_token_response['access_token']
+            globals()['REFRESH_TOKEN'] = parsed_request_token_response['refresh_token']
+        else:
+            print('Couldn\'t read Access Token from Twitch-API response. Access Token request failed. Script will start anew.')
+            continue
+        write_credentials()
+        print('Successfully added Access Token and Refresh Token to credentials.')
+        request_success = True
+
+# ================ SCRIPT STARTS HERE ================ 
 read_credentials()
 read_ignore_list()
 if ACCESS_TOKEN == '':
@@ -213,7 +235,7 @@ if not is_access_token_valid():
     refresh_access_token()
 fetch_user_ids()
 
-# TRANSLATOR = deepl.Translator(AUTH_KEY)
+TRANSLATOR = deepl.DeepLClient(AUTH_KEY)
 
 # bot = Bot()
 # bot.run()
